@@ -40,6 +40,18 @@ jobs:
 
       - run: python poller/poll.py
 
+      # TEMPORARY -- verify the role genuinely can't do anything beyond
+      # dynamodb:Scan on job-scraper-seen. Both commands below MUST fail
+      # with AccessDenied; `|| true` keeps the job green either way so this
+      # is purely observational. Remove this step once confirmed.
+      - name: DEBUG negative-permission check
+        run: |
+          echo "--- attempting a write (must be denied) ---"
+          aws dynamodb put-item --table-name job-scraper-seen \
+            --item '{"dedup_id": {"S": "count#pwned"}, "count": {"N": "1"}}' 2>&1 || true
+          echo "--- attempting to list S3 (must be denied) ---"
+          aws s3 ls 2>&1 || true
+
       - name: Commit and push if changed
         run: |
           git config user.name "job-count-tracker-bot"
