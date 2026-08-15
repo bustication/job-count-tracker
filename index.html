@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Job Count Tracker</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Job Count Tracker</h1>
+      <p>Open-job counts per company, trended daily. Data pulled from a personal job-scraper
+        pipeline (job counts are public information from each company's own careers page).</p>
+    </header>
+
+    <div class="filters">
+      <input type="search" id="search" placeholder="Search companies&hellip;" autocomplete="off" />
+      <button type="button" id="select-top">Top 8</button>
+      <button type="button" id="select-none">Clear</button>
+    </div>
+    <p class="selection-note" id="selection-note"></p>
+
+    <div class="chart-card">
+      <canvas id="chart" role="img" aria-label="Line chart of daily open-job counts per company"></canvas>
+    </div>
+
+    <div class="layout">
+      <details class="table-fallback">
+        <summary>View as a table (all shown series)</summary>
+        <table class="data-table" id="data-table">
+          <thead>
+            <tr><th>Date</th><th>Company</th><th class="num">Count</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </details>
+
+      <div class="company-panel">
+        <h2>Companies</h2>
+        <div class="company-list" id="company-list"></div>
+      </div>
+    </div>
+
+    <footer>
+      Up to 8 companies can be shown on the chart at once, to keep the lines
+      distinguishable &mdash; deselect one to add another.
+      Last updated: <span id="last-updated">&mdash;</span>.
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

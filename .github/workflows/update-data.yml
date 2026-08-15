@@ -1,0 +1,53 @@
+name: Update job count data
+
+on:
+  schedule:
+    # 03:00 UTC, Tue-Sat. job-scraper's own last weekday scrape is 17:00
+    # Pacific Mon-Fri; Pacific evening crosses UTC midnight, landing this on
+    # Tue-Sat UTC, and 03:00 UTC gives a 2-3 hour buffer past that trigger
+    # regardless of PDT/PST. Weekends are skipped entirely on purpose (no
+    # Sun/Mon UTC runs) -- job-scraper's own count data is untouched
+    # Fri->Mon, so a weekend run would just re-record Friday's number as if
+    # it were freshly observed, misrepresenting "no new data" as "surveyed."
+    - cron: '0 3 * * 2-6'
+  workflow_dispatch: {} # manual trigger, e.g. for first-time verification
+
+permissions:
+  id-token: write # needed by aws-actions/configure-aws-credentials (OIDC)
+  contents: write # needed to commit the updated data/history.csv
+
+env:
+  AWS_REGION: us-west-2
+  # Filled in after the first `terraform apply` -- infra/terraform/README.md.
+  DATA_ROLE_ARN: arn:aws:iam::342609432970:role/job-count-tracker-github-actions
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r poller/requirements.txt
+
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ env.DATA_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - run: python poller/poll.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "job-count-tracker-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet -- data/history.csv; then
+            echo "no changes to commit"
+            exit 0
+          fi
+          git add data/history.csv
+          git commit -m "Update job count data ($(TZ=America/Los_Angeles date +%F))"
+          git push
