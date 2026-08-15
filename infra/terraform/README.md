@@ -43,6 +43,15 @@ aws cloudtrail lookup-events \
 match what's in `main.tf`'s trust condition, fix the mismatch and
 `terraform apply` again.
 
+## Verified (2026-08-14)
+
+Confirmed live via a temporary debug step in the Action (added, run once,
+then removed): the role's assumed session gets `AccessDeniedException` on
+`dynamodb:PutItem` against `job-scraper-seen` and `AccessDenied` on
+`s3:ListBuckets` -- it genuinely can do nothing beyond `dynamodb:Scan` on
+that one table. Also confirmed the poller is idempotent (re-running the
+same Pacific day is a no-op, no duplicate rows).
+
 ## Re-running `terraform apply` later
 
 Safe and idempotent -- e.g. if the role's policy ever needs to change. This
