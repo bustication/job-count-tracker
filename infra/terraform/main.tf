@@ -16,8 +16,6 @@
 # output -- split out (2026-09) to match the file layout the sibling
 # scraper repos' own Terraform standards use.
 
-data "aws_caller_identity" "current" {}
-
 # job-scraper's own AWS account already has a GitHub Actions OIDC identity
 # provider (created by that project's own Terraform, for its own CI role) --
 # an OIDC provider is a per-account resource, one is enough for any number of
