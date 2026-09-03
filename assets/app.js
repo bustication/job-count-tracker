@@ -195,7 +195,7 @@ async function main() {
             label(item) {
               const value = item.formattedValue;
               const company = item.dataset.label;
-              return `${value} — ${company}`;
+              return `${value} -- ${company}`;
             },
           },
         },
@@ -241,7 +241,7 @@ async function main() {
       n === 0
         ? "No companies selected."
         : n >= SLOT_COUNT
-        ? `${n} of ${SLOT_COUNT} shown — at the limit; deselect one to add another.`
+        ? `${n} of ${SLOT_COUNT} shown -- at the limit; deselect one to add another.`
         : `${n} of ${SLOT_COUNT} shown.`;
   }
 
@@ -289,7 +289,7 @@ async function main() {
 
     const count = document.createElement("span");
     count.className = "count";
-    count.textContent = String(latest.get(company) ?? "–");
+    count.textContent = String(latest.get(company) ?? "-");
 
     label.append(input, swatch, name, count);
     listEl.appendChild(label);

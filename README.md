@@ -2,12 +2,12 @@
 
 A small static web page that trends how many open jobs each company has,
 per day, on a line graph. Data comes from a separate personal project
-("job scraper") that already scrapes ~169 companies' job boards daily —
+("job scraper") that already scrapes ~169 companies' job boards daily --
 this project reads that project's job-count snapshots (read-only) and
 gives them a permanent home, since the source project only ever keeps the
 single latest value per company.
 
-**Live page**: enable GitHub Pages (Settings → Pages → Deploy from branch:
+**Live page**: enable GitHub Pages (Settings -> Pages -> Deploy from branch:
 `main` / root) and it'll be at `https://<owner>.github.io/job-count-tracker/`.
 
 ## How it works
@@ -34,7 +34,7 @@ Interactive line chart -- up to 8 companies shown at once, search + checkbox
 - **No backend server.** GitHub Pages serves static files; a scheduled
   GitHub Action (`.github/workflows/update-data.yml`) is the only thing
   that runs on a schedule, and it just appends to a CSV and commits.
-- **Weekends are skipped on purpose** — job-scraper itself only scrapes
+- **Weekends are skipped on purpose** -- job-scraper itself only scrapes
   weekdays, so there's nothing new to record on a weekend.
 
 ## One-time setup
@@ -46,4 +46,4 @@ once, manually, from an AWS session with access to job-scraper's account).
 
 Open `index.html` directly, or serve the directory with any static file
 server (needed for `fetch()` to work under `file://` restrictions in some
-browsers) — e.g. `python -m http.server` from the repo root.
+browsers) -- e.g. `python -m http.server` from the repo root.
