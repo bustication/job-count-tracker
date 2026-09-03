@@ -12,37 +12,9 @@
 # (.github/workflows/update-data.yml) never runs `terraform apply`, only ever
 # assumes the role this creates.
 #
-# Remote state (2026-09, security/Terraform-standards audit): local state
-# with no locking was the one point where this stack didn't follow the
-# standards every other Terraform stack in these repos does. Bucket created
-# out-of-band (versioned + encrypted + public-access-blocked, same as
-# job-scraper's own bucket, since a backend can't bootstrap the storage it
-# depends on) and state migrated via `terraform init -migrate-state`.
-
-terraform {
-  # >= 1.10 for the S3 backend's native `use_lockfile` locking below (no
-  # DynamoDB lock table needed) -- see job-scraper's own versions.tf.
-  required_version = ">= 1.10"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-  }
-
-  backend "s3" {
-    bucket       = "job-count-tracker-tfstate-342609432970"
-    key          = "job-count-tracker/terraform.tfstate"
-    region       = "us-west-2"
-    use_lockfile = true
-    encrypt      = true
-  }
-}
-
-provider "aws" {
-  region = var.aws_region
-}
+# See versions.tf for provider/backend config, outputs.tf for the one
+# output -- split out (2026-09) to match the file layout the sibling
+# scraper repos' own Terraform standards use.
 
 data "aws_caller_identity" "current" {}
 
@@ -108,9 +80,4 @@ resource "aws_iam_role_policy" "tracker_dynamo_read" {
   name   = "job-count-tracker-dynamo-read"
   role   = aws_iam_role.tracker_github_actions.id
   policy = data.aws_iam_policy_document.tracker_dynamo_read.json
-}
-
-output "role_arn" {
-  description = "Put this in .github/workflows/update-data.yml's DATA_ROLE_ARN."
-  value       = aws_iam_role.tracker_github_actions.arn
 }
