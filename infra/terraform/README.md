@@ -4,10 +4,13 @@ One IAM role (`job-count-tracker-github-actions`) that this repo's GitHub
 Action assumes via OIDC to read job-scraper's DynamoDB job-count data. See
 `main.tf`'s top comment for the full picture.
 
-State is **local, not committed** (`.gitignore`d) -- this stack is small
-enough (3 resources) that a remote S3 backend isn't worth the extra setup.
-Applied by hand, from a local session with AWS admin access to the same
-account job-scraper itself deploys into.
+State lives in a remote S3 backend (`job-count-tracker-tfstate-342609432970`,
+versioned + encrypted + public-access-blocked, created out-of-band since a
+backend can't bootstrap the storage it depends on -- same pattern as
+job-scraper's own bucket, see that repo's `infra/README.md`) using
+Terraform 1.10+'s native S3 `use_lockfile` locking. Applied by hand, from a
+local session with AWS admin access to the same account job-scraper itself
+deploys into.
 
 ## First-time apply
 
