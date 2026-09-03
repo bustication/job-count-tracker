@@ -4,3 +4,13 @@
 # .terraform.lock.hcl is intentionally NOT ignored -- it pins provider
 # checksums, not just versions, and should be committed (2026-09 security
 # review; see job-scraper's TERRAFORM_CODING_STANDARDS.md).
+
+# Python (poller/poll.py) -- this is a public repo, so no committed secret
+# or credential file should ever exist here in the first place (poll.py
+# authenticates purely via the OIDC-assumed role, no local .env), but a
+# stray one during local testing shouldn't get committed by accident.
+.env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
