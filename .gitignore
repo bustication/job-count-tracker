@@ -1,4 +1,6 @@
 *.tfstate
 *.tfstate.*
 .terraform/
-.terraform.lock.hcl
+# .terraform.lock.hcl is intentionally NOT ignored -- it pins provider
+# checksums, not just versions, and should be committed (2026-09 security
+# review; see job-scraper's TERRAFORM_CODING_STANDARDS.md).
