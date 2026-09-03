@@ -12,6 +12,15 @@ on:
     - cron: '0 3 * * 2-6'
   workflow_dispatch: {} # manual trigger, e.g. for first-time verification
 
+# Serializes runs -- a manual workflow_dispatch overlapping the scheduled
+# run would otherwise race on the `git push` to data/history.csv. A fixed
+# group name (not keyed on github.ref like the sibling scraper repos' own
+# concurrency groups) is correct here: every trigger targets the same
+# branch (main), there's no pull_request event needing its own group.
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
 permissions:
   id-token: write # needed by aws-actions/configure-aws-credentials (OIDC)
   contents: write # needed to commit the updated data/history.csv
